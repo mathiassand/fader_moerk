@@ -28,6 +28,7 @@ function setup() {
 
 function setupGame() {
   console.log('Setting up game...');
+  // Only loaded in the start game and restart game
 
   // Initialize the player sprite
   playerSprite = new Sprite();
