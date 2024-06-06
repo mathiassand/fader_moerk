@@ -1,0 +1,30 @@
+<!-- open -na "Google Chrome" --args --disable-web-security --user-data-dir="/tmp/chrome_dev" -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sketch</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+	  <script src="https://cdn.jsdelivr.net/npm/p5@1/lib/p5.min.js"></script>
+	  <script src="https://cdn.jsdelivr.net/npm/p5@1/lib/addons/p5.sound.min.js"></script>
+	  <script src="https://p5play.org/v3/planck.min.js"></script>
+	  <script src="https://p5play.org/v3/p5play.js"></script>
+  
+    <script src="jumpbar.js"></script>
+    <script src="player.js"></script>
+    <script src="sketch.js"></script>
+  </head>
+
+  <body>
+    <div id="game-container">
+      <button id="startButton" class="centered">Start Game</button>
+      <button id="restartButton" class="centered">Restart Game</button>
+      <div id="overlay" class="centered"></div>
+    </div>
+  </body>
+</html>
