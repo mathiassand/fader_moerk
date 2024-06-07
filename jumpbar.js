@@ -7,7 +7,7 @@ class JumpBar {
   }
 
   display() {
-    fill(150);
+    fill(200);
     rect(this.x, this.y, this.width, this.height);
   }
 }

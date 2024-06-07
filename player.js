@@ -5,7 +5,7 @@ class Player {
     this.height = 64;
     this.velocity = createVector(0, 0);
     this.gravity = 0.6;
-    this.jumpHeight = 15; // Ensure this is set correctly
+    this.jumpHeight = 12; // Ensure this is set correctly
     this.horizontalAcceleration = 5; // Ensure this is set correctly
     this.isJumping = false;
     this.facing = 'left'; // Initial facing direction
@@ -60,8 +60,9 @@ class Player {
     let colliding = (
       this.position.x < jumpBar.x + jumpBar.width &&
       this.position.x + this.width > jumpBar.x &&
+      this.velocity.y > 0 && // Only check collision when falling
       this.position.y + this.height > jumpBar.y &&
-      this.position.y + this.height < jumpBar.y + jumpBar.height
+      this.position.y < jumpBar.y + jumpBar.height
     );
 
     if (colliding) {
