@@ -5,12 +5,11 @@ let scrollOffset = 0;
 let floorHeight = 20;
 let gameState = 'start';
 let startButton, restartButton, overlay;
-let bgImage;
-let playerSprite, playerSpriteImage;
+let bgImage, playerSpriteImage;
 
 function preload() {
   bgImage = loadImage('assets/background_fridge.png'); // Load the background image
-  playerSpriteImage = loadImage('assets/default_left.png'); // Load the player sprite image
+  playerSpriteImage = loadImage('assets/default_left.png'); // Load the player image
 }
 
 function setup() {
@@ -28,22 +27,15 @@ function setup() {
 
 function setupGame() {
   console.log('Setting up game...');
-  // Only loaded in the start game and restart game
-
-  // Initialize the player sprite
-  playerSprite = new Sprite();
-  playerSprite.diameter = 64;
-  playerSprite.image = 'assets/default_left.png';
-  playerSprite.image.yOffset = 6;
-
-  player = new Player(playerSprite); // Initialize player with the sprite
+  
+  player = new Player(playerSpriteImage); // Initialize player with the sprite image
 
   jumpBars = [];
   score = 0;
   scrollOffset = 0;
 
-  let horizontalReach = player.horizontalAcceleration * 100; // Adjust based on player's acceleration
-  let verticalReach = player.jumpHeight * 0.8; // Platforms within jump height
+  let horizontalReach = 200;
+  let verticalReach = 150;
 
   // Create initial platforms
   let initialX = width / 2;
@@ -96,46 +88,41 @@ function drawGameScreen() {
 
   // Update player and scroll the view
   player.update();
+
+  // Translate the view based on scroll offset
+  push();
   translate(0, scrollOffset);
 
   // Update and display platforms
   for (let bar of jumpBars) {
-    bar.checkCollision(player);
+    player.checkCollision(bar);
     bar.display();
   }
 
   // Draw the player sprite
   player.display();
 
+  pop(); // Reset translation
+
   // Scroll the screen upwards if the player reaches a certain height
-  if (player.sprite.position.y < height * 0.5) {
-    scrollOffset = height * 0.5 - player.sprite.position.y;
+  if (player.position.y < height * 0.5) {
+    scrollOffset = height * 0.5 - player.position.y;
   }
 
-  // Generate new platforms
-  let horizontalReach = player.horizontalAcceleration * 100; // Adjust based on player's acceleration
-  let verticalReach = player.jumpHeight * 0.8; // Platforms within jump height
-  if (jumpBars[jumpBars.length - 1].y > player.sprite.position.y - height) {
-    let lastPlatformX = jumpBars[jumpBars.length - 1].x;
-    let x = constrain(lastPlatformX + random(-horizontalReach, horizontalReach), width * 0.2, width * 0.8);
-    let y = jumpBars[jumpBars.length - 1].y - random(verticalReach * 0.5, verticalReach); // Platforms within jump height
-    jumpBars.push(new JumpBar(x, y, 200, 20));
-  }
+  // Generate new platforms if necessary
+  generateNewPlatforms();
 
   // Remove platforms that are out of the view
-  jumpBars = jumpBars.filter(bar => bar.y < player.sprite.position.y + height * 2);
+  jumpBars = jumpBars.filter(bar => bar.y < player.position.y + height * 2);
 
   // Score based on the player's height
-  score = max(score, floor((height - player.sprite.position.y + scrollOffset) / 10));
+  score = max(score, floor((height - player.position.y + scrollOffset) / 10));
 
   // Check for game over condition: player collides with the floor
-  if (player.sprite.position.y >= height - player.sprite.height / 2) {
+  if (player.position.y >= height - player.height / 2) {
     gameState = 'gameover';
     restartButton.show();
   }
-
-  // Reset the translation to draw fixed elements
-  resetMatrix();
 
   // Display the score in the top-left corner
   textSize(32);
@@ -143,7 +130,20 @@ function drawGameScreen() {
   text('Score: ' + score, 10, 30);
 }
 
+function generateNewPlatforms() {
+  // Generate new platforms
+  let lastPlatform = jumpBars[jumpBars.length - 1];
+  if (lastPlatform.y > player.position.y - height) {
+    let x = random(width * 0.2, width * 0.8);
+    let y = lastPlatform.y - random(100, 150); // Use fixed values for vertical reach
+    jumpBars.push(new JumpBar(x, y, 200, 20));
+  }
+}
+
 function drawEndScreen() {
+  // Clear or hide the player sprite
+  player.position.y = height + 100; // Move the player offscreen
+
   overlay.html(`
     <div style="text-align: center;">
       <p style="font-size: 32px; margin: 0;">Game Over</p>

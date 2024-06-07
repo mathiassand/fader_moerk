@@ -1,63 +1,54 @@
 class Player {
-  constructor(sprite) {
-    this.sprite = sprite;
+  constructor(spriteImage) {
+    this.spriteImage = spriteImage;
+    this.position = createVector(width / 2, height - 100);
+    this.width = 64;
+    this.height = 64;
+    this.velocity = createVector(0, 0);
     this.gravity = 0.6;
-    this.lift = -15;
-    this.jumpHeight = -this.lift * 15; // Calculate jump height based on lift
-    this.velocity = 0;
-    this.direction = 0; // -1 for left, 1 for right, 0 for no turn
-    this.speed = 5; // Decrease speed for smoother turns
-    this.horizontalSpeed = 0;
-    this.horizontalAcceleration = 1.0; // Adjust acceleration as needed
-    this.friction = 0.9; // Friction to slow down the player gradually
-    this.canJump = true; // Allow the player to jump initially
-  }
-
-  jump() {
-    if (this.canJump) {
-      this.velocity = this.lift;
-      this.canJump = false; // Disable jump until the player lands
-    }
-  }
-
-  turn(dir) {
-    this.direction = dir;
+    this.jumpHeight = 15; // Ensure this is set correctly
+    this.horizontalAcceleration = 5; // Ensure this is set correctly
+    this.isJumping = false;
   }
 
   update() {
-    this.velocity += this.gravity;
-    this.sprite.position.y += this.velocity;
+    this.velocity.y += this.gravity;
+    this.position.add(this.velocity);
 
-    this.horizontalSpeed += this.direction * this.horizontalAcceleration;
-    this.horizontalSpeed = constrain(this.horizontalSpeed, -this.speed, this.speed); // Cap the speed
-    this.sprite.position.x += this.horizontalSpeed;
-
-    if (this.sprite.position.x < this.sprite.width / 2) {
-      this.sprite.position.x = this.sprite.width / 2;
-      this.horizontalSpeed = 0;
+    if (this.position.y > height - floorHeight / 2) {
+      this.position.y = height - floorHeight / 2;
+      this.velocity.y = 0;
+      this.isJumping = false;
     }
-
-    if (this.sprite.position.x > width - this.sprite.width / 2) {
-      this.sprite.position.x = width - this.sprite.width / 2;
-      this.horizontalSpeed = 0;
-    }
-
-    // Apply friction
-    this.horizontalSpeed *= this.friction;
-
-    // Prevent the player from falling below the floor
-    if (this.sprite.position.y > height - this.sprite.height / 2) {
-      this.sprite.position.y = height - this.sprite.height / 2;
-      this.velocity = 0;
-      this.canJump = true; // Allow jumping again when on the floor
-    }
-
-    // Reset direction to 0 after applying acceleration
-    this.direction = 0;
   }
 
   display() {
-    imageMode(CENTER);
-    image(this.image, this.x, this.y, this.size, this.size);
+    image(this.spriteImage, this.position.x, this.position.y, this.width, this.height);
+  }
+
+  jump() {
+    if (!this.isJumping) {
+      this.velocity.y = -this.jumpHeight;
+      this.isJumping = true;
+    }
+  }
+
+  turn(direction) {
+    this.velocity.x = direction * this.horizontalAcceleration;
+  }
+
+  checkCollision(jumpBar) {
+    let colliding = (
+      this.position.x < jumpBar.x + jumpBar.width &&
+      this.position.x + this.width > jumpBar.x &&
+      this.position.y + this.height > jumpBar.y &&
+      this.position.y + this.height < jumpBar.y + jumpBar.height
+    );
+
+    if (colliding) {
+      this.position.y = jumpBar.y - this.height;
+      this.velocity.y = 0;
+      this.isJumping = false;
+    }
   }
 }
