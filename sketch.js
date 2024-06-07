@@ -45,7 +45,7 @@ function setupGame() {
   for (let i = 0; i < 10; i++) {
     let x = constrain(initialX + random(-horizontalReach, horizontalReach), width * 0.2, width * 0.8);
     let y = height - 100 - i * verticalReach; // Ensure platforms are within jump height and leave space at the bottom
-    jumpBars.push(new JumpBar(x, y, 200, 20));
+    jumpBars.push(new JumpBar(x, y, 150, 20));
     initialX = x;
   }
 
@@ -129,8 +129,8 @@ function drawGameScreen() {
 
   // Display the score in the top-left corner
   textSize(32);
-  fill(0);
-  text('Score: ' + score, 10, 30);
+  fill(123, 200, 255);
+  text('Score: ' + score, 30, 40);
 }
 
 function generateNewPlatforms() {
@@ -139,7 +139,7 @@ function generateNewPlatforms() {
   if (lastPlatform.y > player.position.y - height) {
     let x = random(width * 0.2, width * 0.8);
     let y = lastPlatform.y - random(100, 150); // Use fixed values for vertical reach
-    jumpBars.push(new JumpBar(x, y, 200, 20));
+    jumpBars.push(new JumpBar(x, y, 150, 20));
   }
 }
 
