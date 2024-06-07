@@ -1,6 +1,5 @@
 class Player {
-  constructor(spriteImage) {
-    this.spriteImage = spriteImage;
+  constructor() {
     this.position = createVector(width / 2, height - 100);
     this.width = 64;
     this.height = 64;
@@ -9,6 +8,8 @@ class Player {
     this.jumpHeight = 15; // Ensure this is set correctly
     this.horizontalAcceleration = 5; // Ensure this is set correctly
     this.isJumping = false;
+    this.facing = 'left'; // Initial facing direction
+    this.currentImage = defaultLeftImage; // Initial image
   }
 
   update() {
@@ -19,22 +20,40 @@ class Player {
       this.position.y = height - floorHeight / 2;
       this.velocity.y = 0;
       this.isJumping = false;
+      this.updateImage();
+    }
+
+    if (this.velocity.y !== 0) {
+      this.isJumping = true;
     }
   }
 
   display() {
-    image(this.spriteImage, this.position.x, this.position.y, this.width, this.height);
+    image(this.currentImage, this.position.x, this.position.y, this.width, this.height);
   }
 
   jump() {
     if (!this.isJumping) {
       this.velocity.y = -this.jumpHeight;
       this.isJumping = true;
+      this.updateImage();
     }
   }
 
   turn(direction) {
     this.velocity.x = direction * this.horizontalAcceleration;
+    if (direction !== 0) {
+      this.facing = direction === -1 ? 'left' : 'right';
+      this.updateImage();
+    }
+  }
+
+  updateImage() {
+    if (this.isJumping) {
+      this.currentImage = this.facing === 'left' ? jumpLeftImage : jumpRightImage;
+    } else {
+      this.currentImage = this.facing === 'left' ? defaultLeftImage : defaultRightImage;
+    }
   }
 
   checkCollision(jumpBar) {
@@ -49,6 +68,7 @@ class Player {
       this.position.y = jumpBar.y - this.height;
       this.velocity.y = 0;
       this.isJumping = false;
+      this.updateImage();
     }
   }
 }

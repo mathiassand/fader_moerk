@@ -5,11 +5,14 @@ let scrollOffset = 0;
 let floorHeight = 20;
 let gameState = 'start';
 let startButton, restartButton, overlay;
-let bgImage, playerSpriteImage;
+let bgImage, defaultLeftImage, defaultRightImage, jumpLeftImage, jumpRightImage;
 
 function preload() {
   bgImage = loadImage('assets/background_fridge.png'); // Load the background image
-  playerSpriteImage = loadImage('assets/default_left.png'); // Load the player image
+  defaultLeftImage = loadImage('assets/default_left.png'); // Load the default left image
+  defaultRightImage = loadImage('assets/default_right.png'); // Load the default right image
+  jumpLeftImage = loadImage('assets/jump_left.png'); // Load the jump left image
+  jumpRightImage = loadImage('assets/jump_right.png'); // Load the jump right image
 }
 
 function setup() {
@@ -28,7 +31,7 @@ function setup() {
 function setupGame() {
   console.log('Setting up game...');
   
-  player = new Player(playerSpriteImage); // Initialize player with the sprite image
+  player = new Player(); // Initialize player with no parameters
 
   jumpBars = [];
   score = 0;
@@ -190,5 +193,5 @@ function keyReleased() {
 }
 
 function windowResized() {
-  resizeCanvas(bgImage.width, windowHeight); // Resize the canvas to match the image width and window height
+  resizeCanvas(bgImage.width, windowHeight); // Resize
 }
